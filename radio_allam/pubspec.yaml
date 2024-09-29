@@ -1,0 +1,22 @@
+name: radio_allam
+description: A Flutter podcast app
+publish_to: 'none' # Remove this line if you want to publish to pub.dev
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  get: ^4.6.5  # لإدارة الحالة والانتقالات
+  just_audio: ^0.9.18  # لتشغيل البث المباشر
+  cached_network_image: ^3.2.0  # لعرض الصور من الشبكة
+  shared_preferences: ^2.0.9  # لتخزين البيانات المحلية
+  flutter_svg: ^1.0.3  # لدعم الصور بصيغة SVG
+  animate_do: ^2.0.0  # مكتبة رسوم متحركة
+  google_fonts: ^3.0.1  # لاستخدام خطوط حديثة
+flutter:
+  assets:
+    - assets/images/arabia.jpg
+    - assets/images/quran.png
+    - assets/images/khuzama.png
