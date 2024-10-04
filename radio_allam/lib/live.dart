@@ -4,7 +4,7 @@ class Live extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 400, // Set height for the Live widget
+      height:260, // Set height for the Live widget
       padding: const EdgeInsets.only(top: 8.0, bottom: 16.0), // Adjusted padding to reduce space above
       child: SingleChildScrollView(
         reverse: true, // Enable scrolling from the right
