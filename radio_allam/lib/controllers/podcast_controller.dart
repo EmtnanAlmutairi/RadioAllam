@@ -1,7 +1,8 @@
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:radio_allam/models/radio_channel.dart';
-class RadioController extends GetxController {
+
+class PodcastController extends GetxController {
   final player = AudioPlayer();
 
   var isPlaying = false.obs;

@@ -15,8 +15,23 @@ dependencies:
   flutter_svg: ^1.0.3  # لدعم الصور بصيغة SVG
   animate_do: ^2.0.0  # مكتبة رسوم متحركة
   google_fonts: ^3.0.1  # لاستخدام خطوط حديثة
+  audio_service: ^0.18.2
+  get_storage: ^2.0.3
+  path_provider: ^2.0.9
+  permission_handler: ^10.2.0
 flutter:
   assets:
     - assets/images/arabia.jpg
     - assets/images/quran.png
     - assets/images/khuzama.png
+    - assets/images/logo.png
+    - assets/images/Live1.png
+    - assets/images/Live2.png
+    - assets/images/Live3.png
+    - assets/images/p1.png
+    - assets/images/p2.png
+    - assets/images/p3.png
+    - assets/images/p4.png
+    - assets/images/p5.png
+    - assets/icons/Play.png
+  uses-material-design: true
