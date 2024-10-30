@@ -11,7 +11,7 @@ class PodcastList extends StatelessWidget {
         'subtitle': 'mbcfm',
         'duration': '40 دقيقة',
         'imagePath': 'assets/images/p1.png',
-        'audioUrl': 'radio_allam/assets/Audio/TvQuran.com__108.mp3', // Example URL
+        'audioUrl': 'assets/Audio/radio.mp3', // Example URL
       },
       {
         'title': 'اخبار علام',
