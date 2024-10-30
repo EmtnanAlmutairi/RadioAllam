@@ -34,7 +34,65 @@ class Frame3 extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // Your existing Frame3 widget code
+            Container(
+              width: 48,
+              height: 48,
+              child: Image.asset('assets/icons/play.png'), // Example play icon
+            ),
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        color: Color(0xFF1F1F1F),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 6.5),
+                    Opacity(
+                      opacity: 0.7,
+                      child: Text(
+                        subtitle,
+                        style: TextStyle(
+                          color: Color(0xFF1F1F1F),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 6.5),
+                    Opacity(
+                      opacity: 0.7,
+                      child: Text(
+                        duration,
+                        style: TextStyle(
+                          color: Color(0xFF1F1F1F),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Container(
+              width: 108,
+              height: 96,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Image.asset(
+                  imagePath,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
           ],
         ),
       ),
