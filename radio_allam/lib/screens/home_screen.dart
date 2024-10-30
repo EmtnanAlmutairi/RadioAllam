@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:radio_allam/controllers/podcast_controller.dart';
 import 'package:radio_allam/live.dart'; // تأكد من استيراد ويدجت Live
-import 'package:radio_allam/PodcastWidget.dart';
+import 'package:radio_allam/PodcastList.dart';
 import 'package:radio_allam/menu.dart';
+import 'package:radio_allam/Frame3.dart';
+
 class HomeScreen extends StatelessWidget {
   final PodcastController podcastController = Get.put(PodcastController());
   final TextEditingController searchController = TextEditingController();
