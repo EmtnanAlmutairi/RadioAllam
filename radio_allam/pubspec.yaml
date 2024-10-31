@@ -21,7 +21,7 @@ dependencies:
   permission_handler: ^10.2.0
 flutter:
   assets:
-    - assets/images/arabia.jpg
+    - assets/Audio/radio.mp3
     - assets/images/quran.png
     - assets/images/khuzama.png
     - assets/images/logo.png

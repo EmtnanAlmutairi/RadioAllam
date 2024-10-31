@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:radio_allam/controllers/podcast_controller.dart';
-import 'package:radio_allam/live.dart'; // تأكد من استيراد ويدجت Live
+//import 'package:radio_allam/live.dart'; // تأكد من استيراد ويدجت Live
 import 'package:radio_allam/PodcastList.dart';
 import 'package:radio_allam/menu.dart';
-import 'package:radio_allam/Frame3.dart';
+//import 'package:radio_allam/Frame3.dart';
 
 class HomeScreen extends StatelessWidget {
   final PodcastController podcastController = Get.put(PodcastController());
@@ -78,7 +78,7 @@ class HomeScreen extends StatelessWidget {
                       prefixIcon: Icon(Icons.search, color: Colors.grey),
                     ),
                   ),
-                  Live(), // أضف ويدجت Live هنا
+                  //Live(), // أضف ويدجت Live هنا
                   SizedBox(height: 5),
                   PodcastList(), // أضف قائمة البودكاست هنا
                 ],

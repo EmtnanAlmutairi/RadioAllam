@@ -7,18 +7,11 @@ class PodcastList extends StatelessWidget {
   Widget build(BuildContext context) {
     final podcasts = [
       {
-        'title': 'صباح السعودية',
+        'title': 'اذاعة علام',
         'subtitle': 'mbcfm',
         'duration': '40 دقيقة',
-        'imagePath': 'assets/images/p1.png',
+        'imagePath': 'assets/images/logo.png',
         'audioUrl': 'assets/Audio/radio.mp3', // Example URL
-      },
-      {
-        'title': 'اخبار علام',
-        'subtitle': 'mbcfm',
-        'duration': '40 دقيقة',
-        'imagePath': 'assets/images/p2.png',
-        'audioUrl': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3', // Example URL
       },
     ];
 
