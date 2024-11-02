@@ -156,7 +156,7 @@ class _PodcastHomeScreenState extends State<PodcastHomeScreen> {
                   ),
                   SizedBox(height: 8.0),
                   Text(
-                    'mbcfm',
+                    'Allam radio',
                     textAlign: TextAlign.right,
                     style: TextStyle(
                       fontSize: 16.0,
