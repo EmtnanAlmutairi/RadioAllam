@@ -24,6 +24,7 @@ class PodcastHomeScreen extends StatefulWidget {
 class _PodcastHomeScreenState extends State<PodcastHomeScreen> {
   final AudioPlayer _audioPlayer = AudioPlayer();
   bool _isPlaying = false;
+  String _buttonText = 'تشغيل'; // Initial button text
 
   @override
   void initState() {
@@ -49,6 +50,7 @@ class _PodcastHomeScreenState extends State<PodcastHomeScreen> {
     _audioPlayer.playerStateStream.listen((state) {
       setState(() {
         _isPlaying = state.playing;
+        _buttonText = _isPlaying ? 'إيقاف' : 'تشغيل'; // Update button text based on state
       });
     });
   }
@@ -187,7 +189,7 @@ class _PodcastHomeScreenState extends State<PodcastHomeScreen> {
                           size: 24.0,
                         ),
                         SizedBox(width: 8.0),
-                        Text(_isPlaying ? 'إيقاف' : 'تشغيل'),
+                        Text(_buttonText), // Use the buttonText variable
                       ],
                     ),
                   ),
