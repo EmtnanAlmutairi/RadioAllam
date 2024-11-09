@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import 'package:get/get.dart';
 import '../custom_audio_handler.dart';
 
@@ -22,3 +23,5 @@ class PodcastController extends GetxController {
 
   bool get isPlayerPlaying => audioHandler.isPlaying;
 }
+=======
+>>>>>>> a65a552742d5b151454178a896ebc44ac4631b97

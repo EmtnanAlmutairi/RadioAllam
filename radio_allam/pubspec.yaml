@@ -22,7 +22,7 @@ dependencies:
   audio_session: ^0.1.0
 flutter:
   assets:
-    - assets/images/arabia.jpg
+    - assets/Audio/radio.mp3
     - assets/images/quran.png
     - assets/images/khuzama.png
     - assets/images/logo.png
@@ -34,7 +34,12 @@ flutter:
     - assets/images/p3.png
     - assets/images/p4.png
     - assets/images/p5.png
+<<<<<<< HEAD
     - assets/icons/Play.png
     - assets/audio/radio.mp3
     - assets/audio/TvQuran.com__108.mp3
+=======
+    - assets/icons/logo-white.png
+    - assets/icons/شعار وزارة الإعلام SVG.svg
+>>>>>>> a65a552742d5b151454178a896ebc44ac4631b97
   uses-material-design: true
