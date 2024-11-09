@@ -33,5 +33,6 @@ flutter:
     - assets/images/p3.png
     - assets/images/p4.png
     - assets/images/p5.png
-    - assets/icons/Play.png
+    - assets/icons/logo-white.png
+    - assets/icons/شعار وزارة الإعلام SVG.svg
   uses-material-design: true

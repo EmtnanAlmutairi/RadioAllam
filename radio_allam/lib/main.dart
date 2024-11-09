@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'dart:convert';
 
 void main() {
   runApp(MyApp());
@@ -24,7 +27,6 @@ class PodcastHomeScreen extends StatefulWidget {
 class _PodcastHomeScreenState extends State<PodcastHomeScreen> {
   final AudioPlayer _audioPlayer = AudioPlayer();
   bool _isPlaying = false;
-  String _buttonText = 'تشغيل'; // Initial button text
 
   @override
   void initState() {
@@ -38,10 +40,14 @@ class _PodcastHomeScreenState extends State<PodcastHomeScreen> {
     super.dispose();
   }
 
-  void _setupAudioPlayer() async {
-    const audioUrl = 'assets/Audio/radio.mp3'; // Ensure this path is correct
+  Future<void> _setupAudioPlayer() async {
+    // Uncomment the following line to fetch audio from an API
+    // String audioUrl = await _fetchAudioFromAPI(); // Fetch audio URL from API
+
+    // Use the local audio file instead of fetching from an API
+    const audioUrl = 'assets/Audio/radio.mp3'; // Local audio file path
     try {
-      await _audioPlayer.setAsset(audioUrl);
+      await _audioPlayer.setAsset(audioUrl); // Use setAsset for local audio
     } catch (e) {
       _showErrorDialog('فشل في تحميل ملف الصوت. الرجاء التحقق من المسار أو المحاولة لاحقًا.');
     }
@@ -50,9 +56,21 @@ class _PodcastHomeScreenState extends State<PodcastHomeScreen> {
     _audioPlayer.playerStateStream.listen((state) {
       setState(() {
         _isPlaying = state.playing;
-        _buttonText = _isPlaying ? 'إيقاف' : 'تشغيل'; // Update button text based on state
       });
     });
+  }
+
+  // Example function to fetch audio URL from an API
+  Future<String> _fetchAudioFromAPI() async {
+    // Replace with your actual API URL
+    final response = await http.get(Uri.parse('https://yourapi.com/api/audio/1'));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return data['audioUrl']; // Adjust based on your API's response structure
+    } else {
+      throw Exception('فشل في جلب البيانات من الخادم');
+    }
   }
 
   void _showErrorDialog(String message) {
@@ -77,31 +95,18 @@ class _PodcastHomeScreenState extends State<PodcastHomeScreen> {
     } else {
       await _audioPlayer.play();
     }
-    // No need to set state here as it's updated via the stream listener
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
             pinned: true,
             expandedHeight: 80.0,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Color.fromARGB(255, 255, 255, 255),
-                      Color.fromARGB(255, 255, 255, 255),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-              ),
-            ),
+            backgroundColor: Colors.white,
             title: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -146,6 +151,21 @@ class _PodcastHomeScreenState extends State<PodcastHomeScreen> {
                     ),
                   ),
                   SizedBox(height: 16.0),
+                  Align(
+                    alignment: Alignment.center,
+                    child: ElevatedButton(
+                      onPressed: _togglePlayback,
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.all(16.0),
+                        shape: CircleBorder(),
+                      ),
+                      child: Icon(
+                        _isPlaying ? Icons.pause : Icons.play_arrow,
+                        size: 64.0,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 16.0),
                   Text(
                     'اذاعة علام',
                     textAlign: TextAlign.right,
@@ -160,36 +180,34 @@ class _PodcastHomeScreenState extends State<PodcastHomeScreen> {
                     textAlign: TextAlign.right,
                     style: TextStyle(
                       fontSize: 16.0,
-                      color: Colors.grey,
+                      color: const Color.fromARGB(255, 255, 255, 255),
                     ),
                   ),
                   SizedBox(height: 8.0),
-                  Text(
-                    '40 دقيقة',
-                    textAlign: TextAlign.right,
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  SizedBox(height: 24.0),
-                  ElevatedButton(
-                    onPressed: _togglePlayback,
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(horizontal: 32.0, vertical: 12.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30.0),
-                      ),
-                    ),
+                  Center(
                     child: Row(
-                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          _isPlaying ? Icons.pause : Icons.play_arrow,
-                          size: 24.0,
+                        Image.asset(
+                          'assets/icons/logo-white.png',
+                          height: 80,
+                          width: 80,
                         ),
                         SizedBox(width: 8.0),
-                        Text(_buttonText), // Use the buttonText variable
+                        SvgPicture.asset(
+                          'assets/icons/شعار وزارة الإعلام SVG.svg',
+                          height: 24.0,
+                          width: 24.0,
+                        ),
+                        SizedBox(width: 8.0),
+                        Text(
+                          'رعاة اذاعة علام',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            color: Colors.grey,
+                          ),
+                        ),
                       ],
                     ),
                   ),
