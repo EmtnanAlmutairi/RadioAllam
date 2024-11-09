@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:convert';
 
 void main() {
@@ -26,13 +27,15 @@ class PodcastHomeScreen extends StatefulWidget {
 class _PodcastHomeScreenState extends State<PodcastHomeScreen> {
   final AudioPlayer _audioPlayer = AudioPlayer();
   bool _isPlaying = false;
-  List<String> audioUrls = []; // List of audio URLs
-  int currentAudioIndex = 0;
+  bool _isLoading = false; // للتحقق من حالة التحميل
+  List<String> _audioUrls = []; // لتخزين روابط الصوت
+  int _currentIndex = 0; // لتتبع المقطع الحالي
 
   @override
   void initState() {
     super.initState();
     _setupAudioPlayer();
+    _fetchAudioList(); // جلب البيانات عند بدء التطبيق
   }
 
   @override
@@ -43,34 +46,79 @@ class _PodcastHomeScreenState extends State<PodcastHomeScreen> {
 
   Future<void> _setupAudioPlayer() async {
     try {
-      audioUrls = await _fetchAudioFromAPI(); // Fetch audio URLs from API
-      if (audioUrls.isNotEmpty) {
-        await _audioPlayer.setUrl(audioUrls[currentAudioIndex]); // Set the first audio URL
+      if (_audioUrls.isNotEmpty) {
+        await _audioPlayer
+            .setUrl(_audioUrls[_currentIndex]); // شغل أول رابط من القائمة
+        await _audioPlayer.play(); // تأكد من بدء التشغيل تلقائيًا
       }
     } catch (e) {
-      _showErrorDialog('فشل في تحميل قائمة الصوتيات. الرجاء المحاولة لاحقًا.');
+      _showErrorDialog(
+          'فشل في تحميل ملف الصوت. الرجاء التحقق من الرابط أو المحاولة لاحقًا.');
     }
 
-    // Listen for player state changes
+    // الاستماع لتغيرات حالة المشغل، وتشغيل المقطع التالي بعد الانتهاء من المقطع الحالي
     _audioPlayer.playerStateStream.listen((state) {
+      if (state.processingState == ProcessingState.completed) {
+        // إذا انتهى المقطع الحالي
+        _playNextAudio();
+      }
       setState(() {
         _isPlaying = state.playing;
       });
     });
   }
 
-  // Fetch a list of audio URLs from the API (example)
-  Future<List<String>> _fetchAudioFromAPI() async {
-    // Replace with your actual API URL
-    final response = await http.get(Uri.parse('https://yourapi.com/api/audio'));
+  // جلب قائمة روابط الصوت من الخادم
+  Future<void> _fetchAudioList() async {
+    setState(() {
+      _isLoading = true; // عند بدء تحميل البيانات
+    });
 
-    if (response.statusCode == 200) {
+    try {
+      final response = await http
+          .get(Uri.parse('https://radioallam.devadnan.net/fetch.php'));
       final data = json.decode(response.body);
-      // Assuming the response contains a list of audio URLs under 'audioUrls'
-      List<String> urls = List<String>.from(data['audioUrls']);
-      return urls;
+
+      if (response.statusCode == 200) {
+        if (data.containsKey('episodes')) {
+          setState(() {
+            _audioUrls = List<String>.from(data['episodes']
+                .map((episode) => episode['episode_url'])); // حفظ روابط الصوت
+            _isLoading = false; // تم الانتهاء من التحميل
+          });
+
+          if (_audioUrls.isNotEmpty) {
+            await _audioPlayer
+                .setUrl(_audioUrls[_currentIndex]); // تشغيل أول مقطع صوتي
+            await _audioPlayer.play();
+          }
+        } else {
+          _showErrorDialog('المفتاح "episodes" غير موجود في البيانات.');
+        }
+      } else {
+        throw Exception('فشل في جلب البيانات من الخادم');
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      print('خطأ في جلب البيانات: $e');
+    }
+  }
+
+  void _playNextAudio() async {
+    if (_currentIndex < _audioUrls.length - 1) {
+      _currentIndex++; // الانتقال إلى المقطع التالي
+      await _audioPlayer
+          .setUrl(_audioUrls[_currentIndex]); // تحميل الرابط الجديد
+      await _audioPlayer.play(); // تشغيل المقطع الجديد
     } else {
-      throw Exception('فشل في جلب البيانات من الخادم');
+      // إذا انتهت المقاطع، يمكن إيقاف التشغيل أو إعادة التشغيل من البداية
+      setState(() {
+        _currentIndex = 0; // العودة إلى أول مقطع في القائمة
+      });
+      await _audioPlayer.setUrl(_audioUrls[0]); // إعادة تشغيل أول مقطع
+      await _audioPlayer.play();
     }
   }
 
@@ -98,30 +146,6 @@ class _PodcastHomeScreenState extends State<PodcastHomeScreen> {
     }
   }
 
-  // Play the next audio in the list
-  void _playNextAudio() async {
-    if (currentAudioIndex < audioUrls.length - 1) {
-      setState(() {
-        currentAudioIndex++;
-      });
-      await _audioPlayer.setUrl(audioUrls[currentAudioIndex]);
-      await _audioPlayer.play();
-    } else {
-      _showErrorDialog('لا توجد حلقات أخرى للاستماع إليها.');
-    }
-  }
-
-  // Play the previous audio in the list
-  void _playPreviousAudio() async {
-    if (currentAudioIndex > 0) {
-      setState(() {
-        currentAudioIndex--;
-      });
-      await _audioPlayer.setUrl(audioUrls[currentAudioIndex]);
-      await _audioPlayer.play();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -142,7 +166,7 @@ class _PodcastHomeScreenState extends State<PodcastHomeScreen> {
                     size: 30,
                   ),
                   onPressed: () {
-                    // Add notification functionality here
+                    // إضافة وظيفة الإشعارات هنا
                   },
                 ),
                 Row(
@@ -219,13 +243,19 @@ class _PodcastHomeScreenState extends State<PodcastHomeScreen> {
                           width: 80,
                         ),
                         SizedBox(width: 8.0),
-                        IconButton(
-                          icon: Icon(Icons.skip_previous),
-                          onPressed: _playPreviousAudio,
+                        SvgPicture.asset(
+                          'assets/icons/شعار وزارة الإعلام SVG.svg',
+                          height: 24.0,
+                          width: 24.0,
                         ),
-                        IconButton(
-                          icon: Icon(Icons.skip_next),
-                          onPressed: _playNextAudio,
+                        SizedBox(width: 8.0),
+                        Text(
+                          'رعاة اذاعة علام',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            color: Colors.grey,
+                          ),
                         ),
                       ],
                     ),
