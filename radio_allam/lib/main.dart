@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:convert';
 
 void main() {
@@ -27,6 +26,8 @@ class PodcastHomeScreen extends StatefulWidget {
 class _PodcastHomeScreenState extends State<PodcastHomeScreen> {
   final AudioPlayer _audioPlayer = AudioPlayer();
   bool _isPlaying = false;
+  List<String> audioUrls = []; // List of audio URLs
+  int currentAudioIndex = 0;
 
   @override
   void initState() {
@@ -41,15 +42,13 @@ class _PodcastHomeScreenState extends State<PodcastHomeScreen> {
   }
 
   Future<void> _setupAudioPlayer() async {
-    // Uncomment the following line to fetch audio from an API
-    // String audioUrl = await _fetchAudioFromAPI(); // Fetch audio URL from API
-
-    // Use the local audio file instead of fetching from an API
-    const audioUrl = 'assets/Audio/radio.mp3'; // Local audio file path
     try {
-      await _audioPlayer.setAsset(audioUrl); // Use setAsset for local audio
+      audioUrls = await _fetchAudioFromAPI(); // Fetch audio URLs from API
+      if (audioUrls.isNotEmpty) {
+        await _audioPlayer.setUrl(audioUrls[currentAudioIndex]); // Set the first audio URL
+      }
     } catch (e) {
-      _showErrorDialog('فشل في تحميل ملف الصوت. الرجاء التحقق من المسار أو المحاولة لاحقًا.');
+      _showErrorDialog('فشل في تحميل قائمة الصوتيات. الرجاء المحاولة لاحقًا.');
     }
 
     // Listen for player state changes
@@ -60,14 +59,16 @@ class _PodcastHomeScreenState extends State<PodcastHomeScreen> {
     });
   }
 
-  // Example function to fetch audio URL from an API
-  Future<String> _fetchAudioFromAPI() async {
+  // Fetch a list of audio URLs from the API (example)
+  Future<List<String>> _fetchAudioFromAPI() async {
     // Replace with your actual API URL
-    final response = await http.get(Uri.parse('https://yourapi.com/api/audio/1'));
+    final response = await http.get(Uri.parse('https://yourapi.com/api/audio'));
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      return data['audioUrl']; // Adjust based on your API's response structure
+      // Assuming the response contains a list of audio URLs under 'audioUrls'
+      List<String> urls = List<String>.from(data['audioUrls']);
+      return urls;
     } else {
       throw Exception('فشل في جلب البيانات من الخادم');
     }
@@ -93,6 +94,30 @@ class _PodcastHomeScreenState extends State<PodcastHomeScreen> {
     if (_isPlaying) {
       await _audioPlayer.pause();
     } else {
+      await _audioPlayer.play();
+    }
+  }
+
+  // Play the next audio in the list
+  void _playNextAudio() async {
+    if (currentAudioIndex < audioUrls.length - 1) {
+      setState(() {
+        currentAudioIndex++;
+      });
+      await _audioPlayer.setUrl(audioUrls[currentAudioIndex]);
+      await _audioPlayer.play();
+    } else {
+      _showErrorDialog('لا توجد حلقات أخرى للاستماع إليها.');
+    }
+  }
+
+  // Play the previous audio in the list
+  void _playPreviousAudio() async {
+    if (currentAudioIndex > 0) {
+      setState(() {
+        currentAudioIndex--;
+      });
+      await _audioPlayer.setUrl(audioUrls[currentAudioIndex]);
       await _audioPlayer.play();
     }
   }
@@ -194,19 +219,13 @@ class _PodcastHomeScreenState extends State<PodcastHomeScreen> {
                           width: 80,
                         ),
                         SizedBox(width: 8.0),
-                        SvgPicture.asset(
-                          'assets/icons/شعار وزارة الإعلام SVG.svg',
-                          height: 24.0,
-                          width: 24.0,
+                        IconButton(
+                          icon: Icon(Icons.skip_previous),
+                          onPressed: _playPreviousAudio,
                         ),
-                        SizedBox(width: 8.0),
-                        Text(
-                          'رعاة اذاعة علام',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            color: Colors.grey,
-                          ),
+                        IconButton(
+                          icon: Icon(Icons.skip_next),
+                          onPressed: _playNextAudio,
                         ),
                       ],
                     ),
