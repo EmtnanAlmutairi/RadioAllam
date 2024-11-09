@@ -19,6 +19,7 @@ dependencies:
   get_storage: ^2.0.3
   path_provider: ^2.0.9
   permission_handler: ^10.2.0
+  audio_session: ^0.1.0
 flutter:
   assets:
     - assets/images/arabia.jpg
@@ -34,4 +35,6 @@ flutter:
     - assets/images/p4.png
     - assets/images/p5.png
     - assets/icons/Play.png
+    - assets/audio/radio.mp3
+    - assets/audio/TvQuran.com__108.mp3
   uses-material-design: true
